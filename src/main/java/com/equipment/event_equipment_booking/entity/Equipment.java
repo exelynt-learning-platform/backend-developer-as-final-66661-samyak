@@ -1,10 +1,6 @@
 package com.equipment.event_equipment_booking.entity;
-
-
-
-
 import jakarta.persistence.*;
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "equipment")
@@ -22,22 +18,39 @@ public class Equipment {
     @Column(nullable = false)
     private String type;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+    @Column(nullable = false)
+    private Double price;
 
     @Column(nullable = false)
-    private Boolean available;
+    private Boolean available = true;
 
-    public Equipment() {}
+    @Column(nullable = false)
+    private Boolean isDeleted = false;
 
-    public Equipment(String name, String description, String type,
-                     BigDecimal price, Boolean available) {
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    // Default Constructor (Required by JPA)
+    public Equipment() {
+    }
+
+    // All-arguments Constructor (excluding auto-generated/managed fields if preferred)
+    public Equipment(Long id, String name, String description, String type, Double price, Boolean available, Boolean isDeleted, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.type = type;
         this.price = price;
         this.available = available;
+        this.isDeleted = isDeleted;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
+
+    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -71,11 +84,11 @@ public class Equipment {
         this.type = type;
     }
 
-    public BigDecimal getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -85,5 +98,29 @@ public class Equipment {
 
     public void setAvailable(Boolean available) {
         this.available = available;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

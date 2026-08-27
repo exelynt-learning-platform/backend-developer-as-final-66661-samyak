@@ -4,6 +4,7 @@ import com.equipment.event_equipment_booking.entity.Equipment;
 import com.equipment.event_equipment_booking.repository.EquipmentRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -15,31 +16,48 @@ public class EquipmentService {
         this.equipmentRepository = equipmentRepository;
     }
 
-    public List<Equipment> getAllEquipment() {
-        return equipmentRepository.findAll();
-    }
-
-    public Equipment getEquipmentById(Long id) {
-        return equipmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Equipment item not found with id: " + id));
-    }
-
+    // CREATE
     public Equipment createEquipment(Equipment equipment) {
+        equipment.setIsDeleted(false);
+        equipment.setCreatedAt(LocalDateTime.now());
+        equipment.setUpdatedAt(LocalDateTime.now());
         return equipmentRepository.save(equipment);
     }
 
-    public Equipment updateEquipment(Long id, Equipment updatedEquipment) {
-        Equipment existing = getEquipmentById(id);
-        existing.setName(updatedEquipment.getName());
-        existing.setDescription(updatedEquipment.getDescription());
-        existing.setType(updatedEquipment.getType());
-        existing.setPrice(updatedEquipment.getPrice());
-        existing.setAvailable(updatedEquipment.getAvailable());
+    // READ ONE
+    public Equipment getEquipmentById(Long id) {
+        return equipmentRepository.findById(id).orElse(null);
+    }
+
+    // READ ALL (Only non-deleted)
+    public List<Equipment> getAllEquipment() {
+        return equipmentRepository.findByIsDeletedFalse();
+    }
+
+    // UPDATE
+    public Equipment updateEquipment(Long id, Equipment updatedData) {
+        Equipment existing = equipmentRepository.findById(id).orElse(null);
+        if (existing == null) {
+            return null;
+        }
+
+        existing.setName(updatedData.getName());
+        existing.setDescription(updatedData.getDescription());
+        existing.setType(updatedData.getType());
+        existing.setPrice(updatedData.getPrice());
+        existing.setAvailable(updatedData.getAvailable());
+        existing.setUpdatedAt(LocalDateTime.now());
+
         return equipmentRepository.save(existing);
     }
 
-    public void deleteEquipment(Long id) {
-        Equipment existing = getEquipmentById(id);
-        equipmentRepository.delete(existing);
+    // SOFT DELETE
+    public void softDeleteEquipment(Long id) {
+        Equipment existing = equipmentRepository.findById(id).orElse(null);
+        if (existing != null) {
+            existing.setIsDeleted(true);
+            existing.setUpdatedAt(LocalDateTime.now());
+            equipmentRepository.save(existing);
+        }
     }
 }
