@@ -11,4 +11,6 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Long> {
 
     // Custom query method to fetch only non-deleted records
     List<Equipment> findByIsDeletedFalse();
+
+
 }
